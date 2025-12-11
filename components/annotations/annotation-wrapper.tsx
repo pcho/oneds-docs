@@ -52,17 +52,37 @@ function AnnotationContent({ children }: { children: ReactNode }) {
     const container = containerRef.current;
     if (!container) return;
 
-    container.querySelectorAll('.annotation-highlight').forEach((el) => {
+    // Clear old highlights properly
+    const existingHighlights = container.querySelectorAll('.annotation-highlight');
+    existingHighlights.forEach((el) => {
       const parent = el.parentNode;
       if (parent) {
-        parent.replaceChild(document.createTextNode(el.textContent || ''), el);
-        parent.normalize();
+        // Move all children out before removing the mark
+        while (el.firstChild) {
+          parent.insertBefore(el.firstChild, el);
+        }
+        parent.removeChild(el);
       }
     });
+    // Normalize after all highlights are removed
+    container.normalize();
 
-    annotations.forEach((annotation) => {
-      if (annotation.resolved) return;
-      highlightText(container, annotation.selected_text, annotation.author_color, annotation.id, selectedAnnotation?.id === annotation.id);
+    // Sort annotations by position (earlier positions first) to avoid conflicts
+    const sortedAnnotations = [...annotations]
+      .filter(a => !a.resolved)
+      .sort((a, b) => b.selection_start - a.selection_start); // Process from end to start
+
+    // Apply new highlights
+    sortedAnnotations.forEach((annotation) => {
+      highlightText(
+        container,
+        annotation.selected_text,
+        annotation.author_color,
+        annotation.id,
+        selectedAnnotation?.id === annotation.id,
+        annotation.selection_start,
+        annotation.selection_end
+      );
     });
   }, [annotations, selectedAnnotation]);
 
@@ -285,39 +305,95 @@ function AnnotationContent({ children }: { children: ReactNode }) {
   );
 }
 
-function highlightText(container: HTMLElement, text: string, color: string, annotationId: string, isSelected: boolean) {
+function createHighlightElement(annotationId: string, isSelected: boolean, color: string) {
+  const highlight = document.createElement('mark');
+  highlight.className = 'annotation-highlight';
+  highlight.dataset.annotationId = annotationId;
+  highlight.style.backgroundColor = isSelected ? '#fde047' : '#fef08a';
+  highlight.style.color = '#000000';
+  highlight.style.cursor = 'pointer';
+  highlight.style.borderRadius = '2px';
+  highlight.style.padding = '0 2px';
+  if (isSelected) {
+    highlight.style.outline = `2px solid ${color}`;
+    highlight.style.outlineOffset = '1px';
+  }
+  return highlight;
+}
+
+function highlightText(
+  container: HTMLElement,
+  text: string,
+  color: string,
+  annotationId: string,
+  isSelected: boolean,
+  selectionStart: number,
+  selectionEnd: number
+) {
+  // Build a map of all text nodes with their cumulative offsets
+  const textNodes: { node: Text; start: number; end: number }[] = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+  let offset = 0;
+  let currentNode: Text | null;
 
-  let node: Node | null;
-  while ((node = walker.nextNode())) {
-    const textContent = node.textContent || '';
-    const index = textContent.indexOf(text);
+  while ((currentNode = walker.nextNode() as Text | null)) {
+    const length = currentNode.textContent?.length || 0;
+    if (length > 0) {
+      textNodes.push({ node: currentNode, start: offset, end: offset + length });
+      offset += length;
+    }
+  }
 
-    if (index !== -1) {
-      const range = document.createRange();
-      range.setStart(node, index);
-      range.setEnd(node, index + text.length);
+  // Find all nodes that overlap with our selection range
+  const overlappingNodes = textNodes.filter(
+    n => n.end > selectionStart && n.start < selectionEnd
+  );
 
-      const highlight = document.createElement('mark');
-      highlight.className = 'annotation-highlight';
-      highlight.dataset.annotationId = annotationId;
-      highlight.style.backgroundColor = `${color}40`;
-      highlight.style.cursor = 'pointer';
-      highlight.style.borderRadius = '2px';
-      highlight.style.transition = 'background-color 0.2s';
-
-      if (isSelected) {
-        highlight.style.backgroundColor = `${color}60`;
-        highlight.style.outline = `2px solid ${color}`;
-        highlight.style.outlineOffset = '1px';
+  if (overlappingNodes.length === 0) {
+    // Fallback: try simple text search
+    for (const { node } of textNodes) {
+      const content = node.textContent || '';
+      const idx = content.indexOf(text);
+      if (idx !== -1 && node.parentNode) {
+        if (node.parentNode instanceof HTMLElement &&
+            node.parentNode.classList.contains('annotation-highlight')) {
+          continue;
+        }
+        const range = document.createRange();
+        range.setStart(node, idx);
+        range.setEnd(node, idx + text.length);
+        const highlight = createHighlightElement(annotationId, isSelected, color);
+        try {
+          range.surroundContents(highlight);
+          return;
+        } catch { continue; }
       }
+    }
+    return;
+  }
 
-      try {
-        range.surroundContents(highlight);
-      } catch {
-        // Range crosses element boundaries
-      }
-      break;
+  // Highlight each overlapping node segment
+  for (const { node, start } of overlappingNodes) {
+    if (!node.parentNode) continue;
+    if (node.parentNode instanceof HTMLElement &&
+        node.parentNode.classList.contains('annotation-highlight')) {
+      continue;
+    }
+
+    const nodeStart = Math.max(0, selectionStart - start);
+    const nodeEnd = Math.min(node.textContent?.length || 0, selectionEnd - start);
+
+    if (nodeEnd <= nodeStart) continue;
+
+    const range = document.createRange();
+    range.setStart(node, nodeStart);
+    range.setEnd(node, nodeEnd);
+
+    const highlight = createHighlightElement(annotationId, isSelected, color);
+    try {
+      range.surroundContents(highlight);
+    } catch {
+      // Skip if surroundContents fails
     }
   }
 }
