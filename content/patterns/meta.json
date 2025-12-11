@@ -2,17 +2,11 @@
   "title": "Patterns",
   "pages": [
     "README",
-    "---Behaviours---",
     "behaviours",
-    "---Content---",
     "content",
-    "---Features---",
     "features",
-    "---Flows---",
     "flows",
-    "---Layouts---",
     "layouts",
-    "---Navigation---",
     "navigation"
   ]
 }
