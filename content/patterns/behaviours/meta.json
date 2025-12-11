@@ -1,4 +1,3 @@
 {
-  "title": "Behaviours",
   "pages": ["common", "action-bar", "drawer", "filtering", "global-search", "modal", "notification", "table"]
 }
