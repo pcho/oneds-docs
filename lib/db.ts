@@ -17,9 +17,17 @@ export async function initDb() {
       author TEXT NOT NULL,
       author_color TEXT DEFAULT '#3b82f6',
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      resolved INTEGER DEFAULT 0
+      resolved INTEGER DEFAULT 0,
+      parent_id TEXT DEFAULT NULL
     )
   `);
+
+  // Migration: Add parent_id column if it doesn't exist (for existing tables)
+  try {
+    await db.execute(`ALTER TABLE annotations ADD COLUMN parent_id TEXT DEFAULT NULL`);
+  } catch {
+    // Column already exists, ignore error
+  }
 
   await db.execute(`
     CREATE INDEX IF NOT EXISTS idx_page ON annotations(page_path)
@@ -37,4 +45,5 @@ export type Annotation = {
   author_color: string;
   created_at: string;
   resolved: number;
+  parent_id: string | null;
 };

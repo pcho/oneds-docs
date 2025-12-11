@@ -4,21 +4,173 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { AnnotationProvider, useAnnotations } from './annotation-provider';
 import type { Annotation } from '@/lib/db';
 
+const TEAM_MEMBERS = [
+  { name: 'Karine', color: '#8b5cf6' },   // Purple
+  { name: 'Prem', color: '#06b6d4' },     // Cyan
+  { name: 'Viki', color: '#f97316' },     // Orange
+  { name: 'Leticia', color: '#ec4899' },  // Pink
+  { name: 'Bruno', color: '#22c55e' },    // Green
+  { name: 'Sofia', color: '#3b82f6' },    // Blue
+  { name: 'Goncalo', color: '#eab308' },  // Yellow
+];
+
+// Recursive component for rendering threaded replies
+function ThreadedReplies({
+  parentId,
+  depth,
+  getReplies,
+  selectedAnnotation,
+  setSelectedAnnotation,
+  editingId,
+  setEditingId,
+  editComment,
+  setEditComment,
+  handleSaveEdit,
+  updateAnnotation,
+  deleteAnnotation,
+  replyingTo,
+  setReplyingTo,
+}: {
+  parentId: string;
+  depth: number;
+  getReplies: (id: string) => Annotation[];
+  selectedAnnotation: Annotation | null;
+  setSelectedAnnotation: (a: Annotation | null) => void;
+  editingId: string | null;
+  setEditingId: (id: string | null) => void;
+  editComment: string;
+  setEditComment: (c: string) => void;
+  handleSaveEdit: (id: string) => void;
+  updateAnnotation: (id: string, data: { comment?: string; resolved?: boolean }) => Promise<void>;
+  deleteAnnotation: (id: string) => Promise<void>;
+  replyingTo: Annotation | null;
+  setReplyingTo: (a: Annotation | null) => void;
+}) {
+  const replies = getReplies(parentId).filter(r => !r.resolved);
+
+  if (replies.length === 0) return null;
+
+  return (
+    <div className={`mt-2 space-y-2 ${depth > 0 ? 'ml-4 pl-3 border-l-2 border-fd-border' : ''}`}>
+      {replies.map((reply) => (
+        <div key={reply.id}>
+          <div
+            onClick={() => setSelectedAnnotation(reply)}
+            className={`bg-fd-card/50 border rounded-lg p-2 cursor-pointer transition-all hover:shadow-sm ${
+              selectedAnnotation?.id === reply.id ? 'border-fd-primary shadow-sm' : 'border-fd-border/50'
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <div
+                className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-medium text-white"
+                style={{ backgroundColor: reply.author_color }}
+              >
+                {reply.author[0]}
+              </div>
+              <span className="text-[10px] font-medium">{reply.author}</span>
+              <span className="text-[9px] text-fd-muted-foreground ml-auto">
+                {new Date(reply.created_at).toLocaleDateString()}
+              </span>
+            </div>
+
+            {editingId === reply.id ? (
+              <div className="space-y-1">
+                <textarea
+                  value={editComment}
+                  onChange={(e) => setEditComment(e.target.value)}
+                  className="w-full p-1 text-[11px] bg-fd-background border border-fd-border rounded resize-none"
+                  rows={2}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="flex gap-1">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingId(null); }}
+                    className="px-1.5 py-0.5 text-[9px] border border-fd-border rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleSaveEdit(reply.id); }}
+                    className="px-1.5 py-0.5 text-[9px] bg-fd-primary text-fd-primary-foreground rounded"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs line-clamp-2">{reply.comment}</p>
+                <div className="flex gap-2 mt-1 pt-1 border-t border-fd-border/50">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setEditingId(reply.id); setEditComment(reply.comment); }}
+                    className="text-[9px] text-fd-muted-foreground hover:text-fd-foreground"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setReplyingTo(reply); }}
+                    className="text-[9px] text-fd-muted-foreground hover:text-fd-foreground"
+                  >
+                    Reply
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteAnnotation(reply.id); }}
+                    className="text-[9px] text-red-500 hover:text-red-600 ml-auto"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Recursive nested replies */}
+          <ThreadedReplies
+            parentId={reply.id}
+            depth={depth + 1}
+            getReplies={getReplies}
+            selectedAnnotation={selectedAnnotation}
+            setSelectedAnnotation={setSelectedAnnotation}
+            editingId={editingId}
+            setEditingId={setEditingId}
+            editComment={editComment}
+            setEditComment={setEditComment}
+            handleSaveEdit={handleSaveEdit}
+            updateAnnotation={updateAnnotation}
+            deleteAnnotation={deleteAnnotation}
+            replyingTo={replyingTo}
+            setReplyingTo={setReplyingTo}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function AnnotationContent({ children }: { children: ReactNode }) {
-  const { annotations, selectedAnnotation, setSelectedAnnotation, setPendingSelection, pendingSelection, addAnnotation, updateAnnotation, deleteAnnotation } = useAnnotations();
+  const {
+    annotations,
+    selectedAnnotation,
+    setSelectedAnnotation,
+    setPendingSelection,
+    pendingSelection,
+    addAnnotation,
+    updateAnnotation,
+    deleteAnnotation,
+    replyingTo,
+    setReplyingTo,
+    getReplies,
+    getRootAnnotations,
+  } = useAnnotations();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [comment, setComment] = useState('');
-  const [author, setAuthor] = useState('Designer');
+  const [author, setAuthor] = useState('Karine');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editComment, setEditComment] = useState('');
-
-  const TEAM_MEMBERS = [
-    { name: 'Designer', color: '#3b82f6' },
-    { name: 'Developer', color: '#10b981' },
-    { name: 'PM', color: '#f59e0b' },
-    { name: 'QA', color: '#ef4444' },
-  ];
+  const [replyComment, setReplyComment] = useState('');
+  const [replyAuthor, setReplyAuthor] = useState('Karine');
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -40,14 +192,15 @@ function AnnotationContent({ children }: { children: ReactNode }) {
       const end = start + text.length;
 
       setPendingSelection({ start, end, text });
+      setReplyingTo(null); // Clear reply mode when selecting new text
       setIsExpanded(true);
     };
 
     document.addEventListener('mouseup', handleMouseUp);
     return () => document.removeEventListener('mouseup', handleMouseUp);
-  }, [setPendingSelection]);
+  }, [setPendingSelection, setReplyingTo]);
 
-  // Highlight annotations
+  // Highlight annotations (only root annotations, not replies)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -57,22 +210,20 @@ function AnnotationContent({ children }: { children: ReactNode }) {
     existingHighlights.forEach((el) => {
       const parent = el.parentNode;
       if (parent) {
-        // Move all children out before removing the mark
         while (el.firstChild) {
           parent.insertBefore(el.firstChild, el);
         }
         parent.removeChild(el);
       }
     });
-    // Normalize after all highlights are removed
     container.normalize();
 
-    // Sort annotations by position (earlier positions first) to avoid conflicts
-    const sortedAnnotations = [...annotations]
+    // Only highlight root annotations (not replies)
+    const rootAnnotations = getRootAnnotations();
+    const sortedAnnotations = [...rootAnnotations]
       .filter(a => !a.resolved)
-      .sort((a, b) => b.selection_start - a.selection_start); // Process from end to start
+      .sort((a, b) => b.selection_start - a.selection_start);
 
-    // Apply new highlights
     sortedAnnotations.forEach((annotation) => {
       highlightText(
         container,
@@ -84,7 +235,34 @@ function AnnotationContent({ children }: { children: ReactNode }) {
         annotation.selection_end
       );
     });
-  }, [annotations, selectedAnnotation]);
+  }, [annotations, selectedAnnotation, getRootAnnotations]);
+
+  // Handle clicks on highlighted text to open that comment
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleHighlightClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('annotation-highlight')) {
+        const annotationId = target.dataset.annotationId;
+        if (annotationId) {
+          const annotation = annotations.find(a => a.id === annotationId);
+          if (annotation) {
+            e.preventDefault();
+            e.stopPropagation();
+            setSelectedAnnotation(annotation);
+            setIsExpanded(true);
+            // Clear any text selection that might have been made
+            window.getSelection()?.removeAllRanges();
+          }
+        }
+      }
+    };
+
+    container.addEventListener('click', handleHighlightClick);
+    return () => container.removeEventListener('click', handleHighlightClick);
+  }, [annotations, setSelectedAnnotation]);
 
   const handleSubmit = async () => {
     if (!comment.trim() || !pendingSelection) return;
@@ -98,10 +276,30 @@ function AnnotationContent({ children }: { children: ReactNode }) {
       comment: comment.trim(),
       author,
       author_color: member.color,
+      parent_id: null,
     });
 
     setComment('');
     setPendingSelection(null);
+  };
+
+  const handleReplySubmit = async () => {
+    if (!replyComment.trim() || !replyingTo) return;
+    const member = TEAM_MEMBERS.find((m) => m.name === replyAuthor) || TEAM_MEMBERS[0];
+
+    await addAnnotation({
+      page_path: '',
+      selection_start: replyingTo.selection_start,
+      selection_end: replyingTo.selection_end,
+      selected_text: replyingTo.selected_text,
+      comment: replyComment.trim(),
+      author: replyAuthor,
+      author_color: member.color,
+      parent_id: replyingTo.id,
+    });
+
+    setReplyComment('');
+    setReplyingTo(null);
   };
 
   const handleSaveEdit = async (id: string) => {
@@ -110,8 +308,16 @@ function AnnotationContent({ children }: { children: ReactNode }) {
     setEditComment('');
   };
 
+  // Count all active annotations (including replies)
   const activeAnnotations = annotations.filter((a) => !a.resolved);
-  const hasContent = activeAnnotations.length > 0 || pendingSelection;
+  const rootAnnotations = getRootAnnotations().filter(a => !a.resolved);
+  const hasContent = activeAnnotations.length > 0 || pendingSelection || replyingTo;
+
+  // Count total replies for a root annotation
+  const countAllReplies = (parentId: string): number => {
+    const directReplies = getReplies(parentId);
+    return directReplies.reduce((count, reply) => count + 1 + countAllReplies(reply.id), 0);
+  };
 
   return (
     <div className="relative">
@@ -149,7 +355,7 @@ function AnnotationContent({ children }: { children: ReactNode }) {
               </svg>
             </button>
           ) : (
-            <div className="max-h-[280px] flex flex-col">
+            <div className="max-h-[350px] flex flex-col">
               {/* Header */}
               <div className="px-4 py-2 border-b border-fd-border flex items-center justify-between shrink-0">
                 <span className="text-sm font-medium">
@@ -168,6 +374,50 @@ function AnnotationContent({ children }: { children: ReactNode }) {
               {/* Horizontal scroll area */}
               <div className="flex-1 overflow-x-auto overflow-y-hidden">
                 <div className="flex gap-3 p-3 min-w-max">
+                  {/* Reply input card */}
+                  {replyingTo && (
+                    <div className="w-72 shrink-0 bg-fd-card border border-fd-primary/50 rounded-lg p-3 shadow-sm">
+                      <div className="text-xs text-fd-muted-foreground mb-1">
+                        Replying to <span className="font-medium">{replyingTo.author}</span>
+                      </div>
+                      <div className="text-[11px] text-fd-muted-foreground mb-2 truncate italic">
+                        &quot;{replyingTo.comment.slice(0, 40)}{replyingTo.comment.length > 40 ? '...' : ''}&quot;
+                      </div>
+                      <textarea
+                        value={replyComment}
+                        onChange={(e) => setReplyComment(e.target.value)}
+                        placeholder="Write your reply..."
+                        className="w-full p-2 text-sm bg-fd-background border border-fd-border rounded resize-none focus:outline-none focus:ring-1 focus:ring-fd-ring"
+                        rows={2}
+                        autoFocus
+                      />
+                      <div className="flex items-center gap-2 mt-2">
+                        <select
+                          value={replyAuthor}
+                          onChange={(e) => setReplyAuthor(e.target.value)}
+                          className="flex-1 p-1.5 text-xs bg-fd-background border border-fd-border rounded"
+                        >
+                          {TEAM_MEMBERS.map((m) => (
+                            <option key={m.name} value={m.name}>{m.name}</option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => { setReplyingTo(null); setReplyComment(''); }}
+                          className="px-2 py-1 text-xs border border-fd-border rounded hover:bg-fd-accent"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleReplySubmit}
+                          disabled={!replyComment.trim()}
+                          className="px-2 py-1 text-xs bg-fd-primary text-fd-primary-foreground rounded disabled:opacity-50"
+                        >
+                          Reply
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* New comment card */}
                   {pendingSelection && (
                     <div className="w-72 shrink-0 bg-fd-card border border-fd-primary/50 rounded-lg p-3 shadow-sm">
@@ -209,85 +459,119 @@ function AnnotationContent({ children }: { children: ReactNode }) {
                     </div>
                   )}
 
-                  {/* Existing comments */}
-                  {activeAnnotations.map((annotation) => (
-                    <div
-                      key={annotation.id}
-                      onClick={() => setSelectedAnnotation(annotation)}
-                      className={`w-64 shrink-0 bg-fd-card border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
-                        selectedAnnotation?.id === annotation.id ? 'border-fd-primary shadow-md' : 'border-fd-border'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
+                  {/* Existing root comments with threaded replies */}
+                  {rootAnnotations.map((annotation) => {
+                    const replyCount = countAllReplies(annotation.id);
+
+                    return (
+                      <div
+                        key={annotation.id}
+                        className="w-72 shrink-0 bg-fd-card border rounded-lg p-3 max-h-[280px] overflow-y-auto"
+                        style={{ borderColor: selectedAnnotation?.id === annotation.id ? 'var(--fd-primary)' : undefined }}
+                      >
+                        {/* Root comment */}
                         <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-medium text-white"
-                          style={{ backgroundColor: annotation.author_color }}
+                          onClick={() => setSelectedAnnotation(annotation)}
+                          className={`cursor-pointer transition-all ${
+                            selectedAnnotation?.id === annotation.id ? 'shadow-sm' : ''
+                          }`}
                         >
-                          {annotation.author[0]}
-                        </div>
-                        <span className="text-xs font-medium">{annotation.author}</span>
-                        <span className="text-[10px] text-fd-muted-foreground ml-auto">
-                          {new Date(annotation.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] text-fd-muted-foreground mb-1 truncate italic">
-                        &quot;{annotation.selected_text.slice(0, 30)}{annotation.selected_text.length > 30 ? '...' : ''}&quot;
-                      </div>
-
-                      {editingId === annotation.id ? (
-                        <div className="space-y-2">
-                          <textarea
-                            value={editComment}
-                            onChange={(e) => setEditComment(e.target.value)}
-                            className="w-full p-1.5 text-xs bg-fd-background border border-fd-border rounded resize-none"
-                            rows={2}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                          <div className="flex gap-1">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setEditingId(null); }}
-                              className="px-2 py-0.5 text-[10px] border border-fd-border rounded"
+                          <div className="flex items-center gap-2 mb-1">
+                            <div
+                              className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-medium text-white"
+                              style={{ backgroundColor: annotation.author_color }}
                             >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleSaveEdit(annotation.id); }}
-                              className="px-2 py-0.5 text-[10px] bg-fd-primary text-fd-primary-foreground rounded"
-                            >
-                              Save
-                            </button>
+                              {annotation.author[0]}
+                            </div>
+                            <span className="text-xs font-medium">{annotation.author}</span>
+                            <span className="text-[10px] text-fd-muted-foreground ml-auto">
+                              {new Date(annotation.created_at).toLocaleDateString()}
+                            </span>
                           </div>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="text-sm line-clamp-2">{annotation.comment}</p>
-                          <div className="flex gap-2 mt-2 pt-2 border-t border-fd-border">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setEditingId(annotation.id); setEditComment(annotation.comment); }}
-                              className="text-[10px] text-fd-muted-foreground hover:text-fd-foreground"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); updateAnnotation(annotation.id, { resolved: true }); }}
-                              className="text-[10px] text-fd-muted-foreground hover:text-fd-foreground"
-                            >
-                              Resolve
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); deleteAnnotation(annotation.id); }}
-                              className="text-[10px] text-red-500 hover:text-red-600 ml-auto"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))}
 
-                  {activeAnnotations.length === 0 && !pendingSelection && (
+                          <div className="text-[11px] text-fd-muted-foreground mb-1 truncate italic">
+                            &quot;{annotation.selected_text.slice(0, 30)}{annotation.selected_text.length > 30 ? '...' : ''}&quot;
+                          </div>
+
+                          {editingId === annotation.id ? (
+                            <div className="space-y-2">
+                              <textarea
+                                value={editComment}
+                                onChange={(e) => setEditComment(e.target.value)}
+                                className="w-full p-1.5 text-xs bg-fd-background border border-fd-border rounded resize-none"
+                                rows={2}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setEditingId(null); }}
+                                  className="px-2 py-0.5 text-[10px] border border-fd-border rounded"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleSaveEdit(annotation.id); }}
+                                  className="px-2 py-0.5 text-[10px] bg-fd-primary text-fd-primary-foreground rounded"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-sm">{annotation.comment}</p>
+                              <div className="flex gap-2 mt-2 pt-2 border-t border-fd-border">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setEditingId(annotation.id); setEditComment(annotation.comment); }}
+                                  className="text-[10px] text-fd-muted-foreground hover:text-fd-foreground"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setReplyingTo(annotation); setPendingSelection(null); }}
+                                  className="text-[10px] text-fd-muted-foreground hover:text-fd-foreground"
+                                >
+                                  Reply {replyCount > 0 && `(${replyCount})`}
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); updateAnnotation(annotation.id, { resolved: true }); }}
+                                  className="text-[10px] text-fd-muted-foreground hover:text-fd-foreground"
+                                >
+                                  Resolve
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); deleteAnnotation(annotation.id); }}
+                                  className="text-[10px] text-red-500 hover:text-red-600 ml-auto"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Threaded replies */}
+                        <ThreadedReplies
+                          parentId={annotation.id}
+                          depth={0}
+                          getReplies={getReplies}
+                          selectedAnnotation={selectedAnnotation}
+                          setSelectedAnnotation={setSelectedAnnotation}
+                          editingId={editingId}
+                          setEditingId={setEditingId}
+                          editComment={editComment}
+                          setEditComment={setEditComment}
+                          handleSaveEdit={handleSaveEdit}
+                          updateAnnotation={updateAnnotation}
+                          deleteAnnotation={deleteAnnotation}
+                          replyingTo={replyingTo}
+                          setReplyingTo={setReplyingTo}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {rootAnnotations.length === 0 && !pendingSelection && !replyingTo && (
                     <div className="text-sm text-fd-muted-foreground py-4 px-2">
                       Select text to add a comment
                     </div>
@@ -307,10 +591,10 @@ function AnnotationContent({ children }: { children: ReactNode }) {
 
 function createHighlightElement(annotationId: string, isSelected: boolean, color: string) {
   const highlight = document.createElement('mark');
-  highlight.className = 'annotation-highlight';
+  highlight.className = `annotation-highlight ${isSelected ? 'annotation-highlight-selected' : ''}`;
   highlight.dataset.annotationId = annotationId;
-  highlight.style.backgroundColor = isSelected ? '#fde047' : '#fef08a';
-  highlight.style.color = '#000000';
+  highlight.style.setProperty('--highlight-color', color);
+  highlight.style.display = 'inline';
   highlight.style.cursor = 'pointer';
   highlight.style.borderRadius = '2px';
   highlight.style.padding = '0 2px';
@@ -330,7 +614,6 @@ function highlightText(
   selectionStart: number,
   selectionEnd: number
 ) {
-  // Build a map of all text nodes with their cumulative offsets
   const textNodes: { node: Text; start: number; end: number }[] = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
   let offset = 0;
@@ -344,13 +627,11 @@ function highlightText(
     }
   }
 
-  // Find all nodes that overlap with our selection range
   const overlappingNodes = textNodes.filter(
     n => n.end > selectionStart && n.start < selectionEnd
   );
 
   if (overlappingNodes.length === 0) {
-    // Fallback: try simple text search
     for (const { node } of textNodes) {
       const content = node.textContent || '';
       const idx = content.indexOf(text);
@@ -372,7 +653,6 @@ function highlightText(
     return;
   }
 
-  // Highlight each overlapping node segment
   for (const { node, start } of overlappingNodes) {
     if (!node.parentNode) continue;
     if (node.parentNode instanceof HTMLElement &&
@@ -384,6 +664,10 @@ function highlightText(
     const nodeEnd = Math.min(node.textContent?.length || 0, selectionEnd - start);
 
     if (nodeEnd <= nodeStart) continue;
+
+    // Skip nodes that are only whitespace/newlines
+    const textToHighlight = node.textContent?.slice(nodeStart, nodeEnd) || '';
+    if (!textToHighlight.trim()) continue;
 
     const range = document.createRange();
     range.setStart(node, nodeStart);

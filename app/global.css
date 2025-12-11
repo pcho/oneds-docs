@@ -7,3 +7,32 @@
 @source "../content/**/*.{md,mdx}";
 @source "../lib/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
+
+/* Annotation highlight colors - light mode uses lower opacity, dark mode uses higher */
+.annotation-highlight {
+  --highlight-color: #3b82f6;
+  background-color: color-mix(in srgb, var(--highlight-color) 25%, transparent);
+  color: inherit;
+  transition: background-color 0.15s ease;
+}
+
+.annotation-highlight:hover {
+  background-color: color-mix(in srgb, var(--highlight-color) 35%, transparent);
+}
+
+.annotation-highlight-selected {
+  background-color: color-mix(in srgb, var(--highlight-color) 40%, transparent);
+}
+
+/* Dark mode: increase opacity for better visibility */
+.dark .annotation-highlight {
+  background-color: color-mix(in srgb, var(--highlight-color) 45%, transparent);
+}
+
+.dark .annotation-highlight:hover {
+  background-color: color-mix(in srgb, var(--highlight-color) 55%, transparent);
+}
+
+.dark .annotation-highlight-selected {
+  background-color: color-mix(in srgb, var(--highlight-color) 60%, transparent);
+}

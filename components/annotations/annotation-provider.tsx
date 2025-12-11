@@ -13,6 +13,10 @@ type AnnotationContextType = {
   setSelectedAnnotation: (annotation: Annotation | null) => void;
   pendingSelection: { start: number; end: number; text: string } | null;
   setPendingSelection: (selection: { start: number; end: number; text: string } | null) => void;
+  replyingTo: Annotation | null;
+  setReplyingTo: (annotation: Annotation | null) => void;
+  getReplies: (parentId: string) => Annotation[];
+  getRootAnnotations: () => Annotation[];
 };
 
 const AnnotationContext = createContext<AnnotationContextType | null>(null);
@@ -36,6 +40,15 @@ export function AnnotationProvider({
   const [loading, setLoading] = useState(true);
   const [selectedAnnotation, setSelectedAnnotation] = useState<Annotation | null>(null);
   const [pendingSelection, setPendingSelection] = useState<{ start: number; end: number; text: string } | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Annotation | null>(null);
+
+  const getReplies = useCallback((parentId: string) => {
+    return annotations.filter(a => a.parent_id === parentId);
+  }, [annotations]);
+
+  const getRootAnnotations = useCallback(() => {
+    return annotations.filter(a => !a.parent_id);
+  }, [annotations]);
 
   const fetchAnnotations = useCallback(async () => {
     try {
@@ -59,6 +72,12 @@ export function AnnotationProvider({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, page_path: pagePath }),
     });
+
+    if (!res.ok) {
+      console.error('Failed to add annotation:', await res.text());
+      return;
+    }
+
     const newAnnotation = await res.json();
     setAnnotations((prev) => [newAnnotation, ...prev]);
     setPendingSelection(null);
@@ -95,6 +114,10 @@ export function AnnotationProvider({
         setSelectedAnnotation,
         pendingSelection,
         setPendingSelection,
+        replyingTo,
+        setReplyingTo,
+        getReplies,
+        getRootAnnotations,
       }}
     >
       {children}

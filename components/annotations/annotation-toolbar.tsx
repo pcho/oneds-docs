@@ -4,10 +4,13 @@ import { useState } from 'react';
 import { useAnnotations } from './annotation-provider';
 
 const TEAM_MEMBERS = [
-  { name: 'Designer', color: '#3b82f6' },
-  { name: 'Developer', color: '#10b981' },
-  { name: 'PM', color: '#f59e0b' },
-  { name: 'QA', color: '#ef4444' },
+  { name: 'Karine', color: '#8b5cf6' },   // Purple
+  { name: 'Prem', color: '#06b6d4' },     // Cyan
+  { name: 'Viki', color: '#f97316' },     // Orange
+  { name: 'Leticia', color: '#ec4899' },  // Pink
+  { name: 'Bruno', color: '#22c55e' },    // Green
+  { name: 'Sofia', color: '#3b82f6' },    // Blue
+  { name: 'Goncalo', color: '#eab308' },  // Yellow
 ];
 
 export function AnnotationToolbar() {
@@ -31,6 +34,7 @@ export function AnnotationToolbar() {
       comment: comment.trim(),
       author,
       author_color: selectedMember.color,
+      parent_id: null,
     });
 
     setComment('');
