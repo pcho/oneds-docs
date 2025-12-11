@@ -41,8 +41,8 @@ How users move through and discover content in the app.
 
 ## Behaviour Patterns
 
-### [Action Bar](./behaviours/action-bar.md)
-A contextual toolbar that appears when users select items, perfect for bulk operations.
+### Action Bar
+A contextual toolbar that appears when users select items, perfect for bulk operations. [View pattern →](./behaviours/action-bar.md)
 
 **Use when:** Users need to act on multiple selected items at once.
 
@@ -54,8 +54,8 @@ A contextual toolbar that appears when users select items, perfect for bulk oper
 
 ---
 
-### [Common Actions](./behaviours/common.md)
-Standard interaction patterns for buttons and actions used throughout the system.
+### Common Actions
+Standard interaction patterns for buttons and actions used throughout the system. [View pattern →](./behaviours/common.md)
 
 **Covers:**
 - Save, Create, Upload, Submit
@@ -67,8 +67,8 @@ Standard interaction patterns for buttons and actions used throughout the system
 
 ---
 
-### [Drawer](./behaviours/drawer.md)
-Side panel that slides in from the edge of the screen for secondary content.
+### Drawer
+Side panel that slides in from the edge of the screen for secondary content. [View pattern →](./behaviours/drawer.md)
 
 **Use when:**
 - Displaying filters
@@ -84,8 +84,8 @@ Side panel that slides in from the edge of the screen for secondary content.
 
 ---
 
-### [Filtering](./behaviours/filtering.md)
-Advanced filtering system for narrowing down large datasets.
+### Filtering
+Advanced filtering system for narrowing down large datasets. [View pattern →](./behaviours/filtering.md)
 
 **Use when:**
 - Dataset has 20+ items
@@ -100,8 +100,8 @@ Advanced filtering system for narrowing down large datasets.
 
 ---
 
-### [Global Search](./behaviours/global-search.md)
-System-wide search functionality accessible from anywhere.
+### Global Search
+System-wide search functionality accessible from anywhere. [View pattern →](./behaviours/global-search.md)
 
 **Use when:** Users need to quickly find content across the entire application.
 
@@ -113,8 +113,8 @@ System-wide search functionality accessible from anywhere.
 
 ---
 
-### [Modal](./behaviours/modal.md)
-Focused dialog that appears on top of content, requiring user attention.
+### Modal
+Focused dialog that appears on top of content, requiring user attention. [View pattern →](./behaviours/modal.md)
 
 **Use when:**
 - Confirmation needed
@@ -129,8 +129,8 @@ Focused dialog that appears on top of content, requiring user attention.
 
 ---
 
-### [Notification](./behaviours/notification.md)
-Temporary message providing feedback on user actions or system events.
+### Notification
+Temporary message providing feedback on user actions or system events. [View pattern →](./behaviours/notification.md)
 
 **Use when:** Providing success, error, warning, or info feedback.
 
@@ -142,8 +142,8 @@ Temporary message providing feedback on user actions or system events.
 
 ---
 
-### [Table](./behaviours/table.md)
-Data table pattern for displaying and managing records in list format.
+### Table
+Data table pattern for displaying and managing records in list format. [View pattern →](./behaviours/table.md)
 
 **Use when:** Displaying structured data that users need to scan, sort, and act upon.
 
@@ -158,8 +158,8 @@ Data table pattern for displaying and managing records in list format.
 
 ## Content Patterns
 
-### [Activity Feed](./content/activity-feed.md)
-Chronological list of actions, changes, and events.
+### Activity Feed
+Chronological list of actions, changes, and events. [View pattern →](./content/activity-feed.md)
 
 **Use when:**
 - Showing recent changes
@@ -175,8 +175,8 @@ Chronological list of actions, changes, and events.
 
 ---
 
-### [Relationships](./content/relationships.md)
-Display connections between entities (parent-child, associations, dependencies).
+### Relationships
+Display connections between entities (parent-child, associations, dependencies). [View pattern →](./content/relationships.md)
 
 **Use when:**
 - Showing patent families
@@ -192,8 +192,8 @@ Display connections between entities (parent-child, associations, dependencies).
 
 ---
 
-### [Reporting](./content/reporting.md)
-Report generation, customization, export, and scheduling patterns.
+### Reporting
+Report generation, customization, export, and scheduling patterns. [View pattern →](./content/reporting.md)
 
 **Use when:**
 - Generating portfolio summaries
@@ -211,8 +211,8 @@ Report generation, customization, export, and scheduling patterns.
 
 ## Feature Patterns
 
-### [AI Integration](./features/ai-integration.md)
-Patterns for integrating AI assistance features.
+### AI Integration
+Patterns for integrating AI assistance features. [View pattern →](./features/ai-integration.md)
 
 **Use when:** Adding AI-powered features like suggestions, generation, or analysis.
 
@@ -224,8 +224,8 @@ Patterns for integrating AI assistance features.
 
 ---
 
-### [Document Management](./features/document-management.md)
-Comprehensive document handling patterns.
+### Document Management
+Comprehensive document handling patterns. [View pattern →](./features/document-management.md)
 
 **Use when:** Implementing upload, preview, version control, or document organization.
 
@@ -240,8 +240,8 @@ Comprehensive document handling patterns.
 
 ## Flow Patterns
 
-### [Multi-Step Creation](./flows/multi-step-creation.md)
-Wizard pattern for complex, multi-step processes.
+### Multi-Step Creation
+Wizard pattern for complex, multi-step processes. [View pattern →](./flows/multi-step-creation.md)
 
 **Use when:**
 - Form requires 8+ fields
@@ -262,8 +262,8 @@ Wizard pattern for complex, multi-step processes.
 
 ## Layout Patterns
 
-### [Contextual Views](./layouts/contextual-views.md)
-Display data filtered or scoped to a specific parent entity.
+### Contextual Views
+Display data filtered or scoped to a specific parent entity. [View pattern →](./layouts/contextual-views.md)
 
 **Use when:**
 - Showing documents in a patent
@@ -280,8 +280,8 @@ Display data filtered or scoped to a specific parent entity.
 
 ## Navigation Patterns
 
-### [Header](./navigation/header.md)
-Global navigation header appearing on every page.
+### Header
+Global navigation header appearing on every page. [View pattern →](./navigation/header.md)
 
 **Use when:** Implementing top-level navigation and global actions.
 
