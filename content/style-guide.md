@@ -1,35 +1,33 @@
+---
+title: Style Guide
+description: "Documentation for Style Guide component"
+---
+
 # OneDS Content Style Guide
 
-**Purpose:** Establish consistent voice, tone, and formatting across all component documentation and UI text.
+Consistent voice, tone, and formatting for all UI text.
 
 ---
 
 ## Capitalization
 
-### Use Sentence Case Everywhere
+### Sentence Case Everywhere
 
-Capitalize only the first word and proper nouns. This applies to all UI text.
+Capitalize only the first word and proper nouns.
 
-**✅ Correct:**
+**Do:**
 - "Email address"
 - "Patent application status"
 - "Save changes"
-- "Enable notifications"
 
-**❌ Incorrect:**
-- "Email Address" (title case)
-- "Patent Application Status" (title case)
-- "Save Changes" (title case)
+**Don't:**
+- "Email Address"
+- "Patent Application Status"
+- "Save Changes"
 
-**Applies to:**
-- All labels (form fields, switches, checkboxes, radios)
-- All button text
-- All headings in UI (not documentation)
-- All titles (modals, drawers, sections)
-- All legends (fieldsets)
-- Help text and error messages
+**Applies to:** Labels, buttons, UI headings, titles, legends, help text, error messages.
 
-**Exception:** Proper nouns always capitalized (Microsoft, OneDS, GitHub, etc.)
+**Exception:** Proper nouns (Microsoft, OneDS, GitHub)
 
 ---
 
@@ -37,49 +35,34 @@ Capitalize only the first word and proper nouns. This applies to all UI text.
 
 ### Formula: {Verb} + {Noun}
 
-Be specific about what the button does. Generic labels like "OK", "Submit", or "Delete" don't provide enough context.
+Be specific. Generic labels lack context.
 
-**✅ Correct:**
+**Do:**
 - "Delete patent"
 - "Export data"
 - "Save changes"
-- "Cancel request"
 - "Add team member"
-- "View details"
 
-**❌ Incorrect:**
-- "Delete" (what are we deleting?)
-- "Export" (what are we exporting?)
-- "Save" (saving what?)
-- "Submit" (submitting what?)
-- "OK" (okay to what?)
+**Don't:**
+- "Delete" — delete what?
+- "Submit" — submit what?
+- "OK" — okay to what?
 
-### Use Ellipsis for Dialog-Opening Actions
+### Ellipsis for Dialogs
 
-When a button opens a dialog or requires additional input, use ellipsis (…) to indicate more steps:
+Use ellipsis (…) when a button opens a dialog requiring more input.
 
-**✅ Correct:**
-- "Save as…" (opens dialog to choose location)
-- "Share…" (opens sharing options)
-- "Export…" (opens format selection)
+**Do:** "Save as…", "Share…", "Export…"
 
-**❌ Incorrect:**
-- "Save as..." (use ellipsis character, not three periods)
-- "Export" (no indicator that dialog will open)
+**Don't:** Use three periods (...) instead of ellipsis (…)
 
-**Don't use ellipsis for:**
-- Actions that complete immediately ("Save", "Delete")
-- Navigation ("View details", "Edit")
+**Skip ellipsis for:** Immediate actions ("Save") and navigation ("View details")
 
-### Primary vs Secondary Button Text
+### Primary vs Secondary Buttons
 
-**Primary button (main action):**
-- Active, specific verb
-- "Save changes", "Create application", "Submit request"
+**Primary:** Specific action verb — "Save changes", "Create application"
 
-**Secondary button (cancel/alternative):**
-- "Cancel", "Go back", "Skip"
-- Can be more generic since it's not the main action
+**Secondary:** Generic is fine — "Cancel", "Go back", "Skip"
 
 ---
 
@@ -87,72 +70,30 @@ When a button opens a dialog or requires additional input, use ellipsis (…) to
 
 ### Write Solutions, Not Problems
 
-Error messages should tell users how to fix the issue, not just what went wrong.
+Tell users how to fix the issue, not just what went wrong.
 
-**✅ Correct:**
-```
-Enter your email address in the format name@example.com
-```
+**Do:** "Enter your email in the format name@example.com"
 
-**❌ Incorrect:**
-```
-Invalid field
-```
-
-**✅ Correct:**
-```
-Password must be at least 8 characters and include one number
-```
-
-**❌ Incorrect:**
-```
-Invalid password
-```
+**Don't:** "Invalid field"
 
 ### Error Message Formula
 
-1. State what's needed (optional: briefly state the problem)
-2. Provide the solution or requirement
+1. State what's needed
+2. Provide the requirement
 3. Give an example if helpful
 
-**Template:**
-```
-[What's needed]. [Requirement]. [Example if helpful]
-```
-
 **Examples:**
+- "Enter a valid phone number. Format: (555) 123-4567"
+- "Select at least one notification method"
+- "File must be under 5 MB. Current file is 12 MB."
 
-**✅ Good:**
-```
-Enter a valid phone number. Use format: (555) 123-4567
-```
+### Tone
 
-**✅ Good:**
-```
-Select at least one notification method
-```
+Be helpful, not judgmental. No exclamation marks, technical jargon, or blame.
 
-**✅ Good:**
-```
-File size must be under 5 MB. Current file is 12 MB.
-```
+**Do:** "Email address is required"
 
-### Error Message Tone
-
-- Be helpful, not judgmental
-- No exclamation marks (avoid drama)
-- No technical jargon
-- No blame ("you entered", "you forgot")
-
-**✅ Correct:**
-```
-Email address is required
-```
-
-**❌ Incorrect:**
-```
-You forgot to enter your email!
-```
+**Don't:** "You forgot to enter your email!"
 
 ---
 
@@ -160,43 +101,25 @@ You forgot to enter your email!
 
 ### State Outcomes, Not "Are You Sure?"
 
-Modal and dialog titles should clearly state what will happen, not ask vague confirmation questions.
+Modal titles should clearly state what will happen.
 
-**For Confirmations (Use Questions):**
-
-**✅ Correct:**
+**Confirmations (questions):**
 - "Delete this patent application?"
 - "Discard unsaved changes?"
-- "Remove Sarah from the team?"
 
-**❌ Incorrect:**
-- "Are you sure?"
-- "Confirm action"
-- "Warning"
+**Don't:** "Are you sure?", "Confirm action", "Warning"
 
-**For Information/Errors (Use Statements):**
-
-**✅ Correct:**
+**Information (statements):**
 - "Application submitted successfully"
 - "Connection lost"
-- "File uploaded"
 
-**❌ Incorrect:**
-- "Success!"
-- "Error"
-- "Done"
+**Don't:** "Success!", "Error", "Done"
 
-### Title Formatting
+### Formatting
 
-**Questions:**
-- End with question mark (?)
-- Sentence case
-- Be specific about the action
+**Questions:** End with ?, sentence case, be specific
 
-**Statements:**
-- No period at end
-- Sentence case
-- State the outcome or status
+**Statements:** No period, sentence case, state the outcome
 
 ---
 
@@ -204,192 +127,61 @@ Modal and dialog titles should clearly state what will happen, not ask vague con
 
 ### Keep Labels Concise
 
-**Target length:** Under 60 characters
+Under 60 characters. Use help text for longer explanations.
 
-**✅ Correct:**
-- "Email address"
-- "Patent title"
-- "Notification preferences"
+**Do:** "Email address", "Patent title", "Notification preferences"
 
-**❌ Too long:**
-- "Please enter your email address so we can contact you about your patent application"
+**Don't:** "Please enter your email address so we can contact you about your patent application"
 
-**For longer explanations:** Use help text below the field, not in the label.
+### No Colons
 
-### No Colons at End
+Labels don't need colons.
 
-**✅ Correct:**
-```
-<label>Email address</label>
-```
+**Do:** "Email address"
 
-**❌ Incorrect:**
-```
-<label>Email address:</label>
-```
+**Don't:** "Email address:"
 
-**Reason:** Screen readers add pause after label automatically. Colons are visual-only convention and unnecessary.
+### Switch Labels
 
-### Switch Labels: Describe ON State
+Describe what happens when ON.
 
-Switches should describe what happens when turned ON:
+**Do:** "Enable notifications", "Show advanced options", "Make profile public"
 
-**✅ Correct:**
-- "Enable notifications"
-- "Show advanced options"
-- "Make profile public"
-
-**❌ Incorrect:**
-- "Notifications" (ambiguous)
-- "Advanced options" (is this turning them on or off?)
-- "Profile visibility" (unclear state)
-
-**Pattern:**
-```
-[Enable/Show/Make] + [what happens when ON]
-```
+**Don't:** "Notifications", "Advanced options" — ambiguous states
 
 ---
 
 ## Help Text
 
-### Use Full Sentences with Periods
+### Full Sentences with Periods
 
-Help text should be complete sentences that end with periods.
+**Do:** "Your email will only be used for application updates."
 
-**✅ Correct:**
-```
-Your email will only be used for application updates.
-```
+**Don't:** "Your email will only be used for application updates" (missing period)
 
-**❌ Incorrect:**
-```
-Your email will only be used for application updates
-(missing period)
-```
+### Match Error Text
 
-**✅ Correct:**
-```
-Password must be at least 8 characters.
-```
+Error messages replace help text, so both should contain the same requirements.
 
-### Coordinate with Error Text
+**Do:**
+- Help: "Password must be at least 8 characters with one number."
+- Error: "Password must be at least 8 characters with one number."
 
-Both help text and error messages should contain essential information, since error messages replace help text temporarily.
-
-**Help text:**
-```
-Password must be at least 8 characters and include one number.
-```
-
-**Error message (should include same requirements):**
-```
-Password must be at least 8 characters and include one number.
-```
-
-**Don't do this:**
-
-**Help text:**
-```
-Create a strong password.
-```
-
-**Error message:**
-```
-Password too weak.
-```
-
-(User loses the requirement information when error shows)
+**Don't:**
+- Help: "Create a strong password."
+- Error: "Password too weak." — user loses the requirements
 
 ---
 
 ## Punctuation Rules
 
-### Tooltips
-
-**Use periods for complete sentences:**
-
-**✅ Correct:**
-```
-This action cannot be undone.
-```
-
-**❌ Incorrect:**
-```
-This action cannot be undone
-(missing period for sentence)
-```
-
-**No periods for fragments:**
-
-**✅ Correct:**
-```
-Delete patent application
-```
-
-**❌ Incorrect:**
-```
-Delete patent application.
-(fragment doesn't need period)
-```
-
-**Multiple sentences:**
-
-**✅ Correct:**
-```
-This will delete the application permanently. This action cannot be undone.
-```
-
-### Labels
-
-**Never use punctuation:**
-
-**✅ Correct:**
-```
-Email address
-Patent title
-Notification preferences
-```
-
-**❌ Incorrect:**
-```
-Email address.
-Patent title:
-Notification preferences!
-```
-
-### Buttons
-
-**Never use periods:**
-
-**✅ Correct:**
-```
-Save changes
-Delete patent
-Export data
-```
-
-**❌ Incorrect:**
-```
-Save changes.
-Delete patent.
-```
-
-### Headings
-
-**No periods:**
-
-**✅ Correct:**
-```
-# Patent Application Details
-## Upload Documents
-```
-
-**❌ Incorrect:**
-```
-# Patent Application Details.
-## Upload Documents.
-```
+| Element | Rule | Example |
+|---------|------|---------|
+| Tooltips (sentences) | Period | "This action cannot be undone." |
+| Tooltips (fragments) | No period | "Delete patent application" |
+| Labels | No punctuation | "Email address" |
+| Buttons | No periods | "Save changes" |
+| Headings | No periods | "Patent Application Details" |
 
 ---
 
@@ -397,135 +189,67 @@ Delete patent.
 
 ### Mark the Minority
 
-**If most fields are required:** Mark only the optional ones.
-```
-Email address (optional)
-Phone number (optional)
-```
+**Mostly required forms:** Mark only optional fields — "Phone number (optional)"
 
-**If most fields are optional:** Mark only the required ones.
-```
-Email address *
-Password *
+**Mostly optional forms:** Mark only required fields — "Email address *"
 
-* Required field
-```
-
-### Never Use Asterisks for Optional
-
-**❌ Incorrect:**
-```
-Email address
-Phone number (optional) *
-
-* Optional field
-```
-
-This is confusing. Asterisks universally mean "required" on the web.
+Asterisks mean "required" on the web. Never use them for optional fields.
 
 ---
 
 ## Voice and Tone
 
-### Be Direct and Clear
+### Be Direct
 
-**✅ Correct:**
-```
-Enter your email address
-```
+**Do:** "Enter your email address"
 
-**❌ Too formal:**
-```
-Please be so kind as to enter your email address
-```
+**Too formal:** "Please be so kind as to enter your email address"
 
-**❌ Too casual:**
-```
-Drop your email here
-```
+**Too casual:** "Drop your email here"
 
 ### Avoid Jargon
 
-**✅ Correct:**
-```
-Connection lost. Check your internet connection.
-```
+**Do:** "Connection lost. Check your internet connection."
 
-**❌ Too technical:**
-```
-Network socket connection terminated. Error code: ECONNRESET
-```
+**Don't:** "Network socket connection terminated. Error code: ECONNRESET"
 
 ### Be Helpful, Not Cute
 
-**✅ Correct:**
-```
-No patents found. Try a different search term.
-```
+**Do:** "No patents found. Try a different search term."
 
-**❌ Too cute:**
-```
-Oops! No patents here! 🙈
-```
+**Don't:** "Oops! No patents here!"
 
-### No Exclamation Marks (Generally)
+### Skip Exclamation Marks
 
-**✅ Correct:**
-```
-Application submitted successfully
-```
+**Do:** "Application submitted successfully"
 
-**❌ Incorrect:**
-```
-Application submitted successfully!
-```
-
-**Exception:** Very rare positive moments (major milestone achievements)
+**Don't:** "Application submitted successfully!"
 
 ---
 
 ## Numbers and Data
 
-### Spell Out Small Numbers in Text
+### Spell Out Small Numbers
 
-**In sentences:**
-- One, two, three, four, five, six, seven, eight, nine
-- 10, 11, 12, etc.
+In sentences: one through nine. Use numerals for 10+.
 
-**In data/tables:**
-- Always use numerals: 1, 2, 3, etc.
+In tables/data: Always use numerals.
 
-### Use Commas in Large Numbers
+### Large Numbers
 
-**✅ Correct:**
-- 1,000
-- 10,000
-- 1,000,000
+Use commas: 1,000 / 10,000 / 1,000,000
 
-**❌ Incorrect:**
-- 1000
-- 10000
+Exception: Years (2024, not 2,024)
 
-**Exception:** Years (2024, not 2,024)
+### Missing Values
 
-### Use En Dash for Missing Values
+Use en dash (–) for missing data.
 
-**✅ Correct:**
-```
 | Name  | Status |
 | John  | Active |
 | Sarah | –      |
-```
 
-**❌ Incorrect:**
-```
-N/A
-null
-(empty)
----
-```
-
-**Reason:** En dash is the typographic standard for missing data.
+Don't use: N/A, null, (empty), ---
 
 ---
 
@@ -533,17 +257,18 @@ null
 
 ### Consistent Terminology
 
-**Use consistently:**
-- "Email address" (not "email", "e-mail", or "email address")
-- "Sign in" (not "log in", "login", "sign-in")
-- "Sign out" (not "log out", "logout", "sign-out")
-- "Username" (not "user name", "User Name")
-- "Set up" (verb, two words)
-- "Setup" (noun, one word)
+| Use | Not |
+|-----|-----|
+| Email address | email, e-mail |
+| Sign in / Sign out | log in, login, log out |
+| Username | user name, User Name |
+| Set up (verb) | setup |
+| Setup (noun) | set up |
 
-### Avoid These Phrases
+### Phrases to Avoid
 
-**❌ Don't use:**
+Skip these—they add no value and can sound condescending:
+
 - "Please note that..."
 - "Kindly..."
 - "As you can see..."
@@ -551,90 +276,21 @@ null
 - "Just..."
 - "Obviously..."
 
-**These phrases:**
-- Add no value
-- Can sound condescending
-- Make text longer without helping
+---
+
+## Quick Reference
+
+Before publishing UI text:
+
+- [ ] Sentence case?
+- [ ] Button = verb + noun?
+- [ ] Error explains how to fix?
+- [ ] Label under 60 characters?
+- [ ] Help text ends with period?
+- [ ] Labels have no punctuation?
+- [ ] Tone is helpful and direct?
+- [ ] Terminology is consistent?
 
 ---
 
-## Examples
-
-### Complete Form Example
-
-```html
-<form>
-  <label for="name">Patent applicant name</label>
-  <input type="text" id="name" required>
-
-  <label for="email">Email address</label>
-  <input
-    type="email"
-    id="email"
-    required
-    aria-describedby="email-help">
-  <span id="email-help">
-    Used for application updates only.
-  </span>
-
-  <label for="phone">Phone number (optional)</label>
-  <input type="tel" id="phone">
-
-  <label>
-    <input type="checkbox" required>
-    Enable notifications
-  </label>
-
-  <button type="submit">Submit application</button>
-  <button type="button">Cancel</button>
-</form>
-```
-
-### Complete Modal Example
-
-```html
-<div role="dialog" aria-labelledby="dialog-title">
-  <h2 id="dialog-title">Delete this patent application?</h2>
-  <p>
-    This will permanently delete Patent #12345.
-    This action cannot be undone.
-  </p>
-  <button>Delete patent</button>
-  <button>Cancel</button>
-</div>
-```
-
-### Complete Error Message Examples
-
-```
-Enter your email address in the format name@example.com
-
-Password must be at least 8 characters and include one number
-
-Select at least one notification method
-
-File size must be under 5 MB. Current file is 12 MB.
-
-This username is already taken. Try a different username.
-```
-
----
-
-## Quick Reference Checklist
-
-**Before publishing any UI text, check:**
-
-- [ ] Is it sentence case? (First word only)
-- [ ] Do button labels use {verb} + {noun}?
-- [ ] Do error messages explain how to fix?
-- [ ] Are labels under 60 characters?
-- [ ] Does help text end with period?
-- [ ] Are labels punctuation-free?
-- [ ] Is the tone helpful and direct?
-- [ ] Is terminology consistent?
-- [ ] Will screen reader users understand it?
-- [ ] Would I understand it without visual context?
-
----
-
-**When in doubt, ask:** "Is this clear, helpful, and consistent with OneDS voice?"
+**When in doubt:** Is this clear, helpful, and consistent with OneDS voice?

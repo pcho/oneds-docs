@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+@source "./**/*.{ts,tsx}";
+@source "../content/**/*.{md,mdx}";
+@source "../lib/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
